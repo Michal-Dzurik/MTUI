@@ -1,9 +1,8 @@
 source mtui.sh
+source 'config/colors.sh'
 
 request() {
-    curl "https://www.google.com"
+    curl --silent --output /dev/null "https://www.google.com"
 }
 
-tput civis
-request & loader
-tput cnorm
+sleep 3 & loader --text 'Downloading data' --color $RED --text-after '✅ Done' --color-after $GREEN
