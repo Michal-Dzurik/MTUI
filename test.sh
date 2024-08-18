@@ -5,4 +5,4 @@ request() {
     curl --silent --output /dev/null "https://www.google.com"
 }
 
-sleep 3 & loader --text 'Downloading data' --color $RED --text-after '✅ Done' --color-after $GREEN
+sleep 3 & loader --text 'Downloading data' --color $BLACK --text-after '✅ Done' --color-after $GREEN

@@ -2,13 +2,6 @@
 
 source 'config/colors.sh'
 
-# Test is an equivalend for output that 
-# laravel test give outputs
-test(){    
-    # TODO:Implement
-    echo 'test'
-}
-
 # Basic loader animation
 loader(){    
     hide_cursor
