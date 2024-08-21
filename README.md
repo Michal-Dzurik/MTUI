@@ -150,3 +150,11 @@ label \
     --color $BACKGROUND_COLOR_GREEN   # Background color of label
     --margin-horizontal 5             # Margin from each side
 ```
+
+---
+## How to mix your own color?
+- You can set the color by modifying these templates as a RGB colors
+
+1. `\033[38;2;R;G;Bm` sets the text color.
+
+2. `\033[48;2;R;G;Bm` sets the background color.

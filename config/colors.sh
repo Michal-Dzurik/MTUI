@@ -51,7 +51,7 @@ BOLD_LIGHT_WHITE='\033[1;97m'
 # Reset color
 RESET='\033[0m'
 
-# Background color constants
+# Background color
 BACKGROUND_COLOR_BLACK='\033[40m'
 BACKGROUND_COLOR_RED='\033[41m'
 BACKGROUND_COLOR_GREEN='\033[42m'
@@ -60,3 +60,7 @@ BACKGROUND_COLOR_BLUE='\033[44m'
 BACKGROUND_COLOR_MAGENTA='\033[45m'
 BACKGROUND_COLOR_CYAN='\033[46m'
 BACKGROUND_COLOR_WHITE='\033[47m'
+
+# HOW TO MIX YOUR OWN COLOR? 
+#   \033[38;2;R;G;Bm sets the text color.
+#   \033[48;2;R;G;Bm sets the background color.
