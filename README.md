@@ -36,3 +36,27 @@ for ((i = 0; i < totalComputations; i++)); do
 done
        
 ```
+
+## Option Selector
+
+This script relies on a separate `config/colors.sh` file that defines color constants for customization. You'll need to create this file with your desired color codes.
+
+Here's how to show `Option Selector`:
+
+```bash
+# Array of options
+options=("Option 1" "Option 2" "Option 3" "Option 4")
+
+option_select \
+    --color $BLACK # Text color
+    --highlight-color $BLACK # Highligth color
+    "${options[@]}" # Array of options
+
+# The result is then saved in array named SELECTED
+# This array consists of indexes choosen
+# Here is an example how to print it out
+
+for i in ${SELECTED[@]}; do
+    echo "${options[$i]}"
+done
+```
