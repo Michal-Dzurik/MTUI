@@ -12,22 +12,39 @@ loader(){
     local _delay=0.1
     local _spinstr='|/-\'
 
-    local _text=$(_parse_arg --text "$@")
-    local _color=$(_parse_arg --color "$@")
-    local _textAfter=$(_parse_arg --text-after "$@")
-    local _colorAfter=$(_parse_arg --color-after "$@")
+    local _text=""
+    local _color=""
+    local _textAfter=""
+    local _colorAfter=""
 
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --color)
+                _color="$2"
+                shift 2
+                ;;
+            --color-after)
+                _colorAfter="$2"
+                shift 2
+                ;;
+            --text-after)
+                _textAfter="$2"
+                shift 2
+                ;;
+            *)
+                _text="$1"
+                shift
+                ;;
+        esac
+    done
 
+    # Cycle runs until the previous process is finished
     while [ "$(ps a | awk '{print $1}' | grep $_pid)" ]; do
-        if [[ -n "$_color" ]]; then 
-            printf "$_color"
-        fi
-
         local _temp=${_spinstr#?}
-        printf "[%c] " "$_spinstr"
-        if [[ -n "$_text" ]]; then 
-            printf $_text
-        fi
+
+        # Building the ouptput
+        printf "$_color[%c] $_text" "$_spinstr"
+
         _spinstr=$_temp${_spinstr%"$_temp"}
         sleep $_delay
         _cursor_restore
@@ -38,38 +55,48 @@ loader(){
     _cursor_restore
     _clear_line
 
-    if [[ -n "$_colorAfter" ]]; then 
-        printf "$_colorAfter"
-    fi
-
     if [[ -n "$_textAfter" ]]; then 
-        printf "$_textAfter\n"
+        printf "$_colorAfter$_textAfter\n"
     fi
 
-    if [[ -n "$_color" ]]; then 
-        printf $RESET
-    fi
+    printf $RESET
     _show_cursor
 }
 
 # Progress bar
 init_progress_bar() {
-    _width=$(_parse_arg --width "$@")
-    _color=$(_parse_arg --color "$@")
+    _width=""
+    _color=""
 
-    export PROGRESS_BAR_PROGRESS=0
-    export PROGRESS_BAR_TOTAL=$1
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --width)
+                _width="$2"
+                shift 2
+                ;;
+            --color)
+                _color="$2"
+                shift 2
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+
+    PROGRESS_BAR_PROGRESS=0
+    PROGRESS_BAR_TOTAL=$1
 
     if [[ -n $_width ]]; then
-        export PROGRESS_BAR_WIDTH=$_width
+        PROGRESS_BAR_WIDTH=$_width
     else 
-        export PROGRESS_BAR_WIDTH=50
+        PROGRESS_BAR_WIDTH=50
     fi
 
     if [[ -n $_color ]]; then
-        export PROGRESS_BAR_COLOR=$_color
+        PROGRESS_BAR_COLOR=$_color
     else 
-        export PROGRESS_BAR_WIDTH=$WHITE
+        PROGRESS_BAR_WIDTH=$WHITE
     fi
 }
 
@@ -77,13 +104,13 @@ advance_progress_bar(){
     _cursor_save
     _hide_cursor
 
-    export PROGRESS_BAR_PROGRESS=$((PROGRESS_BAR_PROGRESS + 1))
-
+    PROGRESS_BAR_PROGRESS=$((PROGRESS_BAR_PROGRESS + 1))
 
     local _percent=$((PROGRESS_BAR_PROGRESS * 100 / PROGRESS_BAR_TOTAL))
-
     local _completed=$((_percent * PROGRESS_BAR_WIDTH / 100))
     local _remaining=$((PROGRESS_BAR_WIDTH - _completed))
+
+    # Building the output
     printf "$PROGRESS_BAR_COLOR["
     for ((_completedCounter = 0; _completedCounter < _completed; _completedCounter++)); do
         printf "#"
@@ -95,7 +122,6 @@ advance_progress_bar(){
 
     # Cleanup
     _cursor_restore
-
     printf $RESET
 
     if (( $_percent >= 100 )); then
@@ -106,28 +132,25 @@ advance_progress_bar(){
 
 ### USER INPUT VIEWS
 
-# UI list of options and the 
-# ability to select multiple
-# choices
 option_select() {
     _hide_cursor
     _cursor_save
 
-    local _highligthColor=""
-    local _coolor=""
+    local _highlightColor=""
+    local _color=""
     local -a _options=()
-    local -a _selected=()
+    declare -a _selected=()
     local _cursor=0
     local firstPrint=0
 
     while [[ $# -gt 0 ]]; do
         case $1 in
-            "--color")
+            --color)
                 _color="$2"
                 shift 2
                 ;;
-            "--highlight-color")
-                _highligthColor="$2"
+            --highlight-color)
+                _highlightColor="$2"
                 shift 2
                 ;;
             *)
@@ -137,35 +160,9 @@ option_select() {
         esac
     done
 
-
-    # Function to print the options and highlight the selected one
-    _print_menu() {
-        if [ "$1" = "1"  ]; then
-            _cursor_restore
-        fi
-        for _i in "${!_options[@]}"; do
-            printf $_color
-            if [[ $_i -ne 0 ]]; then
-                printf "\n"
-            fi
-            if [[ " ${_selected[*]} " == *" ${_i} "* ]]; then
-                printf "[x]"    
-            else 
-                printf "[ ]"  
-            fi
-            
-            if [[ $_i == $_cursor ]]; then
-                printf "${_highligthColor}"
-            fi
-
-   
-            printf " ${_options[_i]}"
-            printf $RESET
-        done
-    }
-
     while true; do
-        _print_menu $firstPrint
+        # Here the second parameter is callback for accepting our choices
+        _print_menu $firstPrint _option_output_print
         firstPrint=1
 
         local _key=$(_get_char)
@@ -182,7 +179,7 @@ option_select() {
 
         case $_key in
             $'\x1b')  # Arrow key handling
-                read -s -n 2 _key 
+                read -rsn2 _key 
                 case $_key in
                     "[A")  # Up arrow
                         ((_cursor--))
@@ -205,13 +202,11 @@ option_select() {
     printf "\n"
 }
 
-# UI list of options and the 
-# ability to select one choice
 radio_select(){
     _hide_cursor
     _cursor_save
 
-    local _highligthColor=""
+    local _highlightColor=""
     local _coolor=""
     local -a _options=()
     SELECTED=-1
@@ -220,12 +215,12 @@ radio_select(){
 
     while [[ $# -gt 0 ]]; do
         case $1 in
-            "--color")
+            --color)
                 _color="$2"
                 shift 2
                 ;;
-            "--highlight-color")
-                _highligthColor="$2"
+            --highlight-color)
+                _highlightColor="$2"
                 shift 2
                 ;;
             *)
@@ -235,50 +230,26 @@ radio_select(){
         esac
     done
 
-
-    # Function to print the options and highlight the selected one
-    _print_menu() {
-        if [ "$1" = "1"  ]; then
-            _cursor_restore
-        fi
-        for _i in "${!_options[@]}"; do
-            printf $_color
-            if [[ $_i -ne 0 ]]; then
-                printf "\n"
-            fi
-            if [[ $SELECTED -gt -1 && " $SELECTED " == *" ${_i} "* ]]; then
-                printf "[x]"    
-            else 
-                printf "[ ]"  
-            fi
-            
-            if [[ $_i == $_cursor ]]; then
-                printf "${_highligthColor}"
-            fi
-
-   
-            printf " ${_options[_i]}"
-            printf $RESET
-        done
-    }
-
     while true; do
-        _print_menu $firstPrint
+        # Here the second parameter is callback for accepting our choice
+        _print_menu $firstPrint _radio_output_print
         firstPrint=1
 
         local _key=$(_get_char)
 
-        if [[ $_key == "\s" || $_key == "" ]]; then  # Space key for selection
+        if [[ $_key == "" ]]; then  # Space key for selection
             SELECTED=$_cursor
-            _print_menu $firstPrint
+            _print_menu $firstPrint _radio_output_print
+
             echo "\n"
             _show_cursor
+
             return
         fi
 
         case $_key in
             $'\x1b')  # Arrow key handling
-                read -s -n 2 _key 
+                read -rsn2 _key 
                 case $_key in
                     "[A")  # Up arrow
                         ((_cursor--))
@@ -296,10 +267,12 @@ radio_select(){
                 ;;
         esac
     done
+
     _show_cursor
-    
     printf "\n"
 }
+
+
 
 label(){
     _color=""
@@ -307,11 +280,11 @@ label(){
 
     while [[ $# -gt 0 ]]; do
         case $1 in
-            "--color")
+            --color)
                 _color="$2"
                 shift 2
                 ;;
-            "--margin-horizontal")
+            --margin-horizontal)
                 _marginHorizontal=$2
                 shift 2
                 ;;
@@ -322,8 +295,8 @@ label(){
         esac
     done
 
+    # Building output
     printf "$_color"
-
     _print " " $(( ${#_text} + ($_marginHorizontal * 2) ))
     printf "$RESET\n"
     printf "$_color"

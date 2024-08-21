@@ -17,20 +17,16 @@ The `loader` function displays a loading animation while a process runs in the b
 
 ```bash
 your_process & loader \
-  --text "Loading..."       # Text to display during loading
-  --color "$BLACK"          # Color for the loading text
-  --text-after "Done!"      # Text to display after the process completes
+  "Loading..." \            # Text to display during loading
+  --color "$BLACK" \        # Color for the loading text
+  --text-after "Done!" \    # Text to display after the process completes
   --color-after "$GREEN"    # Color for the completion text
 ```
 
 **Example:**
 
 ```bash
-sleep 5 & loader \
-  --text "Processing..." \
-  --color "$YELLOW" \
-  --text-after "Completed!" \
-  --color-after "$GREEN"
+sleep 5 & loader "Processing..." --color "$YELLOW" --text-after "Completed!" --color-after "$GREEN"
 ```
 
 ### 2. Progress Bar
@@ -77,9 +73,9 @@ The `option_select` function allows users to select multiple options from a list
 options=("Option 1" "Option 2" "Option 3" "Option 4")
 
 option_select \
-    --color $BLACK          # Text color for options
-    --highlight-color $WHITE # Highlight color for the selected option
-    "${options[@]}"         # Array of options
+    --color $BLACK \            # Text color for options
+    --highlight-color $WHITE \  # Highlight color for the selected option
+    "${options[@]}"             # Array of options
 ```
 
 **Retrieving Selections:**
@@ -112,9 +108,9 @@ The `radio_select` function allows users to select a single option from a list. 
 options=("Option 1" "Option 2" "Option 3" "Option 4")
 
 radio_select \
-    --color $BLACK           # Text color for options
-    --highlight-color $WHITE # Highlight color for the selected option
-    "${options[@]}"          # Array of options
+    --color $BLACK \            # Text color for options
+    --highlight-color $WHITE \  # Highlight color for the selected option
+    "${options[@]}"             # Array of options
 ```
 
 **Retrieving the Selection:**
@@ -146,9 +142,9 @@ The `label` function allows you to print text in form of label with margins for 
 ```bash
 
 label \ 
-    "Expecto patronum!"               # Label conten
-    --color $BACKGROUND_COLOR_GREEN   # Background color of label
-    --margin-horizontal 5             # Margin from each side
+    "Expecto patronum!" \               # Label conten
+    --color $BACKGROUND_COLOR_GREEN \   # Background color of label
+    --margin-horizontal 5               # Margin from each side
 ```
 
 ---

@@ -31,32 +31,7 @@ _show_cursor() {
         exit 1
     fi
 }
- 
-# Parser for arguments with no array in it
-#
-# @param $1 array
-# @return mixed 
-_parse_arg() {
-    _key="$1"
-    shift
 
-    while [[ $# -gt 0 ]]; do
-        _current_key="$1"
-        if [[ "$_current_key" == "$_key" ]]; then
-            shift
-            if [[ $# -gt 0 ]]; then
-                echo "$1"
-            else
-                echo ""  # No value available
-            fi
-            return 0
-        fi
-        shift
-    done
-
-    echo ""  # Key not found
-    return 1
-}
 
 # Print n times
 #
@@ -104,4 +79,49 @@ _cursor_save(){
 
 _cursor_restore(){
     printf $CURSOR_RESTORE_POSITION
+}
+
+# Printing 
+
+# Callback for radio output
+_radio_output_print(){
+    if [[ $SELECTED -gt -1 && " $SELECTED " == *" ${_i} "* ]]; then
+        printf "[x]"    
+    else 
+        printf "[ ]"  
+    fi
+}
+
+# Callback for option output
+_option_output_print(){
+    if [[ " ${_selected[*]} " == *" ${_i} "* ]]; then
+        printf "[x]"    
+    else 
+        printf "[ ]"  
+    fi
+}
+
+# Prints out menu of options
+#
+# @param $1 firstIteratedOutput
+# @param $2 callback for dispalying mark or endidng the cycle
+_print_menu() {
+    local _callback=$2
+    if [ "$1" = "1"  ]; then
+        _cursor_restore
+    fi
+    for _i in "${!_options[@]}"; do
+        [[ $_i -ne 0 ]] && printf "\n"
+        printf $_color
+
+        $_callback
+        
+        if [[ $_i -eq $_cursor ]]; then
+            printf "${_highlightColor}"
+        fi
+
+
+        printf " ${_options[_i]}"
+        printf $RESET
+    done
 }
