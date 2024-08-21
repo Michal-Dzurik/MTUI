@@ -16,12 +16,15 @@ init_progress_bar $total --color $GREEN --width 80
 
 options=("Option 1" "Option 2" "Option 3" "Option 4")
 
-option_select --color $BLACK --highlight-color $RED "${options[@]}"
+#option_select --color $BLACK --highlight-color $RED "${options[@]}"
 
 
-echo Your choices:
+#echo Your choices:
 
-for i in ${SELECTED[@]}; do
-    echo "${options[$i]}"
-done
+#for i in ${SELECTED[@]}; do
+    #echo "${options[$i]}"
+#done
 
+radio_select --color $BLACK --highlight-color $RED "${options[@]}"
+
+echo "${options[$SELECTED]}"

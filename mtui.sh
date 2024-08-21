@@ -208,8 +208,97 @@ option_select() {
 # UI list of options and the 
 # ability to select one choice
 radio_select(){
-    # TODO: Implement
-    echo 'radio_select'
+    _hide_cursor
+    _cursor_save
+
+    local _highligthColor=""
+    local _coolor=""
+    local -a _options=()
+    SELECTED=-1
+    local _cursor=0
+    local firstPrint=0
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            "--color")
+                _color="$2"
+                shift 2
+                ;;
+            "--highlight-color")
+                _highligthColor="$2"
+                shift 2
+                ;;
+            *)
+                _options+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+
+    # Function to print the options and highlight the selected one
+    _print_menu() {
+        if [ "$1" = "1"  ]; then
+            _cursor_restore
+        fi
+        for _i in "${!_options[@]}"; do
+            printf $_color
+            if [[ $_i -ne 0 ]]; then
+                printf "\n"
+            fi
+            if [[ $SELECTED -gt -1 && " $SELECTED " == *" ${_i} "* ]]; then
+                printf "[x]"    
+            else 
+                printf "[ ]"  
+            fi
+            
+            if [[ $_i == $_cursor ]]; then
+                printf "${_highligthColor}"
+            fi
+
+   
+            printf " ${_options[_i]}"
+            printf $RESET
+        done
+    }
+
+    while true; do
+        _print_menu $firstPrint
+        firstPrint=1
+
+        local _key=$(_get_char)
+
+        if [[ $_key == "\s" || $_key == "" ]]; then  # Space key for selection
+            SELECTED=$_cursor
+            _print_menu $firstPrint
+            echo "\n"
+            _show_cursor
+            return
+        fi
+
+        case $_key in
+            $'\x1b')  # Arrow key handling
+                read -s -n 2 _key 
+                case $_key in
+                    "[A")  # Up arrow
+                        ((_cursor--))
+                        if [ $_cursor -lt 0 ]; then
+                            _cursor=$((${#_options[@]} - 1))
+                        fi
+                        ;;
+                    "[B")  # Down arrow
+                        ((_cursor++))
+                        if [ $_cursor -ge ${#_options[@]} ]; then
+                            _cursor=0
+                        fi
+                        ;;
+                esac
+                ;;
+        esac
+    done
+    _show_cursor
+    
+    printf "\n"
 }
 
 ###--------HELPER FUNCTIONS--------###
