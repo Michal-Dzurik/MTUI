@@ -136,3 +136,17 @@ echo "You selected: ${choices[$SELECTED]}"
 ---
 
 **Note:** Remember to source the `config/colors.sh` file in your script to use color constants. This allows for consistent styling across all components.
+
+### 5. Label
+
+The `label` function allows you to print text in form of label with margins for text inside. Function doesn't return any value.
+
+**Usage:**
+
+```bash
+
+label \ 
+    "Expecto patronum!"               # Label conten
+    --color $BACKGROUND_COLOR_GREEN   # Background color of label
+    --margin-horizontal 5             # Margin from each side
+```

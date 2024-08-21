@@ -301,6 +301,41 @@ radio_select(){
     printf "\n"
 }
 
+label(){
+    _color=""
+    _marginHorizontal=3
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            "--color")
+                _color="$2"
+                shift 2
+                ;;
+            "--margin-horizontal")
+                _marginHorizontal=$2
+                shift 2
+                ;;
+            *)
+                _text=$1
+                shift
+                ;;
+        esac
+    done
+
+    printf "$_color"
+
+    _print " " $(( ${#_text} + ($_marginHorizontal * 2) ))
+    printf "$RESET\n"
+    printf "$_color"
+    _print " " $_marginHorizontal
+    printf "$_text"
+    _print " " $_marginHorizontal
+    printf "$RESET\n"
+    printf "$_color"
+    _print " " $(( ${#_text} + ($_marginHorizontal * 2) ))
+    printf "$RESET\n"
+} 
+
 ###--------HELPER FUNCTIONS--------###
 
 # Hides the cursor depending on OS
@@ -370,7 +405,7 @@ _print(){
     local _char=$1
     local _count=$2
     for ((_printCounter=0; _printCounter < _count; _printCounter++)); do
-        printf "%s" $_char
+        printf "$_char"
     done
 }
 

@@ -27,4 +27,6 @@ options=("Option 1" "Option 2" "Option 3" "Option 4")
 
 radio_select --color $BLACK --highlight-color $RED "${options[@]}"
 
-echo "${options[$SELECTED]}"
+#echo "${options[$SELECTED]}"
+
+#label "Expecto patronum!" --color $BACKGROUND_COLOR_GREEN --margin-horizontal 3
