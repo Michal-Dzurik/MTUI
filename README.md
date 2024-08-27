@@ -1,11 +1,40 @@
+# Let's create a markdown file with the updated documentation content.
 
+documentation_content = """
 # MTUI Documentation
 
-**MTUI** is a Terminal User Interface (TUI) framework designed to enhance your bash scripts with user-friendly command-line interfaces. It provides utility functions such as loaders, progress bars, option selectors, and radio selectors, making your scripts more interactive and visually appealing.
+**MTUI** is a Terminal User Interface (TUI) framework designed to enhance your bash scripts with user-friendly command-line interfaces. It provides utility functions such as loaders, progress bars, option selectors, radio selectors, and labels, making your scripts more interactive and visually appealing.
 
 ### Prerequisites
 
 MTUI relies on a separate `config/colors.sh` file that defines color constants for customization. Ensure you create this file with your desired color codes to customize the appearance of the UI components.
+
+### MTUI Configuration
+
+The `mtui_config` function allows you to configure global settings for the UI components using a JSON file. This includes setting accent colors and padding.
+
+**Usage:**
+
+```bash
+mtui_config "path/to/config.json"
+```
+
+**Example Configuration JSON:**
+
+```json
+{
+    "accent-color": "GOLD", 
+    "accent-background-color": "BACKGROUND_COLOR_GOLD",
+    "padding-horizontal": "3",
+    "padding-vertical": "1"
+}
+```
+
+---
+
+**Note:** You can create your own colors in `custom/colors.sh` file and then use it to configure mtui.
+
+
 
 ## Features
 
@@ -16,7 +45,7 @@ The `loader` function displays a loading animation while a process runs in the b
 **Usage:**
 
 ```bash
-your_process & loader \
+your_process & loader \\\
   "Loading..." \            # Text to display during loading
   --color "$BLACK" \        # Color for the loading text
   --text-after "Done!" \    # Text to display after the process completes
@@ -38,7 +67,7 @@ The `progress_bar` function visually represents the progress of a task. It is us
 ```bash
 totalComputations=100
 
-init_progress_bar $totalComputations \ 
+init_progress_bar $totalComputations \\\ 
   --color $GREEN         # Color of the progress bar
   --width 80             # Width of the progress bar (default is 50)
 ```
@@ -72,7 +101,7 @@ The `option_select` function allows users to select multiple options from a list
 ```bash
 options=("Option 1" "Option 2" "Option 3" "Option 4")
 
-option_select \
+option_select \\\
     --color $BLACK \            # Text color for options
     --highlight-color $WHITE \  # Highlight color for the selected option
     "${options[@]}"             # Array of options
@@ -107,7 +136,7 @@ The `radio_select` function allows users to select a single option from a list. 
 ```bash
 options=("Option 1" "Option 2" "Option 3" "Option 4")
 
-radio_select \
+radio_select \\\
     --color $BLACK \            # Text color for options
     --highlight-color $WHITE \  # Highlight color for the selected option
     "${options[@]}"             # Array of options
@@ -129,28 +158,21 @@ radio_select --color $MAGENTA --highlight-color $WHITE "${choices[@]}"
 echo "You selected: ${choices[$SELECTED]}"
 ```
 
----
-
-**Note:** Remember to source the `config/colors.sh` file in your script to use color constants. This allows for consistent styling across all components.
-
 ### 5. Label
 
-The `label` function allows you to print text in form of label with margins for text inside. Function doesn't return any value.
+The `label` function allows you to print text in the form of a label with margins for text inside. The function does not return any value.
 
 **Usage:**
 
 ```bash
-
-label \ 
-    "Expecto patronum!" \               # Label conten
-    --color $BACKGROUND_COLOR_GREEN \   # Background color of label
+label \\\
+    "Expecto patronum!" \               # Label content
+    --background-color $BACKGROUND_COLOR_GREEN \   # Background color of label
     --margin-horizontal 5               # Margin from each side
 ```
 
----
-## How to mix your own color?
-- You can set the color by modifying these templates as a RGB colors
+**Example:**
 
-1. `\033[38;2;R;G;Bm` sets the text color.
-
-2. `\033[48;2;R;G;Bm` sets the background color.
+```bash
+label "Success!" --background-color $BACKGROUND_COLOR_GREEN --margin-horizontal 3
+```

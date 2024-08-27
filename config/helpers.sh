@@ -68,7 +68,6 @@ _get_char(){
     fi
 }
 
-
 _clear_line(){
     printf $CURSOR_CLEAR_LINE
 }
@@ -79,6 +78,10 @@ _cursor_save(){
 
 _cursor_restore(){
     printf $CURSOR_RESTORE_POSITION
+}
+
+_cursor_up(){
+    printf $CURSOR_UP
 }
 
 # Printing 
@@ -105,23 +108,79 @@ _option_output_print(){
 #
 # @param $1 firstIteratedOutput
 # @param $2 callback for dispalying mark or endidng the cycle
+# @return void
 _print_menu() {
     local _callback=$2
+    
     if [ "$1" = "1"  ]; then
         _cursor_restore
+    else 
+        _cursor_save
     fi
+
+    _apply_padding $_padding_vertical 0
+
     for _i in "${!_options[@]}"; do
         [[ $_i -ne 0 ]] && printf "\n"
+
+        _apply_padding 0 $_padding_horizontal
         printf $_color
 
         $_callback
         
         if [[ $_i -eq $_cursor ]]; then
-            printf "${_highlightColor}"
+            printf "$_highlight_color"
         fi
-
 
         printf " ${_options[_i]}"
         printf $RESET
     done
+
+    _apply_padding $_padding_vertical 0
+}
+
+# Gets a json property
+#
+# @param $1 filePath
+# @param $2 variable name
+# @return eighter a value if string or value of variable name that string represents
+_json_get(){
+    _value=$(grep -o "\"$2\": \".*\"" "$1" | sed "s/\"$2\": \"\(.*\)\"/\1/")
+    _varValue="${!_value}"
+
+    if [[ -n $_varValue ]]; then 
+        _re='^[0-9]+$'
+        if ! [[ $_value =~ $_re ]] ; then
+            echo $_varValue
+            return 
+        fi
+    fi
+        
+    echo $_value
+}
+
+# Applies paddings
+#
+# @param $1 verticalPadding
+# @param $2 horizontalPadding
+# @return void
+_apply_padding(){
+    if [[ -n $1 ]]; then
+        _print "\n" $1 
+    fi
+
+    _clear_line
+
+    if [[ -n $2 ]]; then
+        printf '%*s' $2 ''   
+    fi
+}
+
+
+_input_disable(){
+    stty -echo -icanon time 0 min 0
+}
+
+_input_enable(){
+    stty echo icanon
 }
