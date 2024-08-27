@@ -390,7 +390,7 @@ label(){
 
     while [[ $# -gt 0 ]]; do
         case $1 in
-            ---background-color | -c)
+            --background-color | -bc)
                 _background_color="$2"
                 shift 2
                 ;;

@@ -6,13 +6,13 @@ request() {
     curl --silent --output /dev/null "https://www.google.com"
 }
 
-#sleep 2 & loader 'Downloading data'
+sleep 2 & loader 'Downloading data'
 total=100
-init_progress_bar $total --width 80 
+#init_progress_bar $total --width 80 
 
-for ((i = 0; i < total; i++)); do
-    sleep 0.04 && advance_progress_bar
-done
+#for ((i = 0; i < total; i++)); do
+#    sleep 0.04 && advance_progress_bar
+#done
 
 options=("Option 1" "Option 2" "Option 3" "Option 4")
 
@@ -29,6 +29,8 @@ options=("Option 1" "Option 2" "Option 3" "Option 4")
 
 #echo "${options[$SELECTED]}"
 
-#echo "\n"
-#label "Expecto patronum!" --margin-horizontal 3
-#echo "\n"
+_cursor_restore
+
+echo "\n"
+label "Done" --background-color $BACKGROUND_GREEN --margin-horizontal 3
+echo "\n"
