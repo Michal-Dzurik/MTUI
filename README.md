@@ -1,6 +1,3 @@
-# Let's create a markdown file with the updated documentation content.
-
-documentation_content = """
 # MTUI Documentation
 
 **MTUI** is a Terminal User Interface (TUI) framework designed to enhance your bash scripts with user-friendly command-line interfaces. It provides utility functions such as loaders, progress bars, option selectors, radio selectors, and labels, making your scripts more interactive and visually appealing.
