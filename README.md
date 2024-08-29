@@ -2,11 +2,11 @@
 
 **MTUI** is a Terminal User Interface (TUI) framework designed to enhance your bash scripts with user-friendly command-line interfaces. It provides utility functions such as loaders, progress bars, option selectors, radio selectors, and labels, making your scripts more interactive and visually appealing.
 
-### Prerequisites
+## Prerequisites
 
 MTUI relies on a separate `config/colors.sh` file that defines color constants for customization. Ensure you create this file with your desired color codes to customize the appearance of the UI components.
 
-### MTUI Configuration
+## MTUI Configuration
 
 The `mtui_config` function allows you to configure global settings for the UI components using a JSON file. This includes setting accent colors and padding.
 
@@ -30,8 +30,6 @@ mtui_config "path/to/config.json"
 ---
 
 **Note:** You can create your own colors in `custom/colors.sh` file and then use it to configure mtui.
-
-
 
 ## Features
 
